@@ -1,4 +1,16 @@
-# create-svelte
+# Phare
+
+## ¿Qué es nuestro proyecto?
+
+Es una aplicacióno web con el propósito de mejorar el desempeño de los estudiantes en pruebas de estado tipo ICFES, instándolos a realizar simulacros de forma virtual.
+
+<!-- ## Capturas -->
+
+<!-- ![Página principal][] -->
+<!-- ![Página pruebas][pruebas]
+![Página login][pruebas] -->
+
+<!-- # create-svelte
 
 Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
 
@@ -35,4 +47,4 @@ npm run build
 
 You can preview the production build with `npm run preview`.
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment. -->
