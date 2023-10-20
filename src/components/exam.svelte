@@ -1,92 +1,109 @@
-<script context="module">
-  // import { Database } from '$lib/firebase';
-  // import { onMount } from 'svelte';
+<script>
+  import { goto } from '$app/navigation';
+  import { Database, Exam } from '$lib/firebase';
+  import { user, completedExams } from '$lib/stores';
+  import { onMount } from 'svelte';
 
-  // const getData = async () => {
-  //   const exam = await Database.getDocument('cursos', 'matematicas');
-  //   console.log(exam);
-  // };
+  export let examName;
 
-  // onMount(getData());
+  let examData = [];
 
-  const exam = {
-    title: 'Matemáticas',
-    description:
-      'Lee atentamente y escoje la respuesta que tú consideres es la correcta',
-    setQuestions: [
-      {
-        description: 'Preguntas de prueba',
-        questions: [
-          {
-            questionId: 1,
-            groupId: 1,
-            question: 'Pregunta #1',
-            answers: ['🍊', '🍋', '🍉', '🍇'],
-            correctAnswer: '🍋',
-          },
-          {
-            questionId: 2,
-            groupId: 1,
-            question: 'Pregunta #2',
-            answers: ['🍈', '🍍', '🍉', '🍇'],
-            correctAnswer: '🍉',
-            // answers: [
-            //   'ShawnShank Redemption',
-            //   'The green mile',
-            //   '1917',
-            //   'The Truman Show',
-            //   'Todas son buenas 😫',
-            // ],
-            // correctAnswer: 'Todas son buenas 😫',
-          },
-        ],
-      },
-    ],
+  onMount(async () => {
+    const data = await Database.getDocument('cursos', examName);
+    const { setQuestions } = data;
+
+    examData = [...setQuestions];
+  });
+
+  const addQuestion = (e) => {
+    const target = e.target;
+
+    const userAnswer = target.value;
+    const qId = target.dataset.qId;
+    const gId = target.dataset.gId;
+
+    const setQuestion = examData.find((setQuestion) => {
+      return setQuestion.groupId == parseInt(gId);
+    });
+    const { questions } = setQuestion;
+
+    const question = questions.find(
+      (question) => question.questionId === parseInt(qId)
+    );
+
+    question.userAnswer = userAnswer;
   };
-  const { setQuestions } = exam;
+  const sendData = () => {
+    const { uid } = $user;
+    const data = {};
+
+    data.examName = examName;
+    data.examData = examData;
+    $completedExams = true;
+
+    Exam.addExam('usuarios', uid, data, 'exams', uid);
+    goto('/');
+  };
+
+  const showContExplanation = async (groupId, questionContexts) => {
+    const foundContext = questionContexts.find(
+      (context) => context.groupId === groupId
+    );
+    return foundContext.context;
+  };
 </script>
 
-<form class="section section--exam">
-  {#each setQuestions as set}
-    <p>{set.description}</p>
-    {#each set.questions as question}
-      {question.question}
+{#await Database.getDocument('cursos', examName)}
+  <section class="section">
+    <h1>Espera...</h1>
+  </section>
+{:then response}
+  <form class="section" on:submit|preventDefault={sendData}>
+    <h1>{response.title}</h1>
+    <p>{response.description}</p>
 
-      <ul>
-        {#each question.answers as answer}
-          <li>
-            <label>
-              <input
-                type="radio"
-                name={question.groupId}
-                data-g-id={question.groupId}
-                data-q-id={question.questionId}
-              />
-              {answer}
-            </label>
-          </li>
-        {/each}
-      </ul>
+    {#each response.setQuestions as setQuestion}
+      <p>{setQuestion.contextQuestion}</p>
+      {#each setQuestion.questions as question}
+        <p class="question">
+          {question.questionId}. {question.question}
+        </p>
+
+        <ul class="answers">
+          {#each question.answers as answer}
+            <li>
+              <label>
+                <input
+                  required
+                  value={answer}
+                  name={question.question}
+                  type="radio"
+                  data-g-id={question.groupId}
+                  data-q-id={question.questionId}
+                  on:click={addQuestion}
+                />
+                {answer}
+              </label>
+            </li>
+          {/each}
+        </ul>
+      {/each}
     {/each}
-  {/each}
-</form>
+    <button class="btn">Finalizar prueba</button>
+  </form>
+{/await}
 
-<!-- <form on:submit|preventDefault={submitData} class="section section--exam"> -->
-<!-- <form class="section section--exam">
+<style>
+  .question {
+    /* font-size: var(--font-bold); */
+    font-weight: var(--font-bold);
+  }
+  .answers {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
 
-  <ul class="questions__answers">
-    {#each setQuestions.answers as answer }
-      <li class="questions__answer">
-        <label class="answer-label">
-          <input 
-            required
-            value={answer}
-            name={setQuestions.question}
-            type="radio"
-          >
-          {answer}
-        </label>
-      </li>	
-    {/each}
-  </ul> 
-</form> -->
+    list-style: none;
+    padding-left: 0px;
+  }
+</style>

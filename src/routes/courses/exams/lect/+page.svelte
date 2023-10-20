@@ -1,1 +1,8 @@
-<h1>lectura crítica</h1>
+<script>
+  import Exam from '../../../../components/exam.svelte';
+</script>
+
+<Exam examName={'lectura'} />
+
+<style>
+</style>

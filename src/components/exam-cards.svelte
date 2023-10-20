@@ -37,7 +37,12 @@
   </div>
 {:else}
   {#each examList as exam}
-    <a class="link-container" href={exam.route}>
+    <a
+      class="link-container"
+      href={exam.route}
+      data-sveltekit-preload-data="off"
+    >
+      <!-- on:click|preventDefault={() => console.log(exam.examName)} -->
       <main class="card">
         <h2 class="card__title title">{exam.examName}</h2>
         <img class="card__img" src={exam.srcImg} alt={exam.examName} />

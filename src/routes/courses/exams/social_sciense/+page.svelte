@@ -1,1 +1,8 @@
-<h1>Sociales</h1>
+<script>
+  import Exam from '../../../../components/exam.svelte';
+</script>
+
+<Exam examName={'sociales'} />
+
+<style>
+</style>

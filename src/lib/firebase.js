@@ -6,6 +6,7 @@ import {
   getDocs,
   setDoc,
   getDoc,
+  updateDoc,
   query,
 } from 'firebase/firestore';
 import {
@@ -62,11 +63,20 @@ export const Database = (() => {
   };
   const delData = async () => {};
 
+  const updateData = async (collName, docName, data, propName) => {
+    const docRef = doc(db, collName, docName);
+    const examData = {};
+
+    examData[propName] = data;
+    updateDoc(docRef, { ...examData });
+  };
+
   return {
     getDocuments,
     getDocsId,
     getDocument,
     addData,
+    updateData,
     db,
   };
 })();
@@ -110,9 +120,28 @@ export const Users = (() => {
     });
   };
   const delUser = (user) => {};
-
+  const addExamAnswers = (userId) => {};
   return {
     addUser,
     delUser,
   };
+})();
+export const Exam = (() => {
+  const addExam = async (collName, docName, data, propName, uId) => {
+    const user = await Database.getDocument('usuarios', uId);
+    const { exams } = user;
+    const { examName } = data;
+
+    const foundedExam = exams.find((exam) => exam.examName === examName);
+
+    if (!foundedExam) {
+      exams.push(data);
+      Database.updateData(collName, docName, exams, propName);
+    } else {
+      exams.splice(exams.indexOf(foundedExam), 1, data);
+      Database.updateData(collName, docName, exams, propName);
+    }
+  };
+
+  return { addExam };
 })();

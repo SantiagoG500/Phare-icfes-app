@@ -1,1 +1,8 @@
-<h1>Inglés</h1>
+<script>
+  import Exam from '../../../../components/exam.svelte';
+</script>
+
+<Exam examName={'ingles'} />
+
+<style>
+</style>

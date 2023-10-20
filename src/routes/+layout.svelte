@@ -1,7 +1,12 @@
 <script>
   import { onAuthStateChanged } from 'firebase/auth';
   import { isLoggedIn, user } from '$lib/stores';
-  import { Auth } from '$lib/firebase';
+  import { Auth, Database } from '$lib/firebase';
+  import { onMount } from 'svelte';
+
+  // onMount(async () => {
+  //   const currentUser = await Database.getDocument('usuarios', $user.uid);
+  // });
 
   onAuthStateChanged(Auth.authInfo, (authUser) => {
     $user = authUser;
@@ -21,11 +26,11 @@
           <a class="link link--nav" href="main-routes/account/">Perfil</a>
         </li>
         <li class="nav__li">
+          <a class="link link--nav" href="results/">Resultados</a>
+        </li>
+        <li class="nav__li">
           <button href="/" on:click={Auth.logOut}>LogOut</button>
         </li>
-        <!-- <li class="nav__li">
-          <a class="link link--nav" href="results/">Resultados</a>
-        </li> -->
       {:else}
         <li class="nav__li"><a class="link link--nav" href="/">Home</a></li>
         <li class="nav__li">
@@ -83,6 +88,8 @@
     --gray6: #12181b;
 
     --black-cyan: hsl(180, 100%, 30%);
+    --correct-answer: hsl(110, 100%, 50%);
+    --incorrect-answer: hsl(12, 100%, 50%);
 
     --font-light: 200;
     --font-regular: 400;

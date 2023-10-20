@@ -2,7 +2,7 @@
   import Exam from '../../../../components/exam.svelte';
 </script>
 
-<Exam />
+<Exam examName={'matematicas'} />
 
 <style>
 </style>
